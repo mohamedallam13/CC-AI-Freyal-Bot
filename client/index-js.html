@@ -1,0 +1,610 @@
+<? const botImage ="https://drive.google.com/file/d/1Kq_P0ba9nLdFp8zZkXMoY4h9-V3JNo48/view?usp=share_link" ?>
+<? const userImage ="https://drive.google.com/file/d/1S5HbyvIlqZLE76KoitCcNJYOaxhGlKNJ/view?usp=share_link" ?>
+<? const CCLogo = "https://drive.google.com/file/d/1HBl0HHnAbwPz_0-KmDSkDBu7ImNJcQBM/view?usp=sharing" ?>
+
+
+<script>
+  const WELCOME_SCREEN =   {
+    type: "text",
+    text: "Hey there. Don't worry, you're in the right place. We're here for you.",
+    description: "This is Cairo Confessions, a community that is filled with the bright, open minds of the Egyptian people.",
+  }
+
+  const END_SCREEN = {
+    type: "text",
+    text: 'Alright. Your confession has been submitted, again your reference number is <referenceNumber> If you need to be connected to a professional, please checkout our own list of professionals under this link:\nhttps://www.cairoconfessions.com/home/professionals',
+    description: 'If your confession is not posted within the next 48 hours, then it has either broken one or more of our rules or a very similar one may have been posted before. Please check our "Rules and Regulations" linked in our About section. If you have any questions about your confession, please inbox us or email us at confessions.cairo@gmail.com.',
+  }
+
+  const BOT_SCRIPT_ARRAY = [
+  {
+    type: "choices",
+    choices: ["Happy","Sad", "Meh"],
+    text: "How are you feeling?",
+    description: "We want you happy, so we'll try our best to make sure to reach out to you if you're not feeling that good.",
+    param: "mood",
+    stop: true,
+  },
+  {
+    type: "choices",
+    choices: ["Male","Female"],
+    text: "Are you male or female?",
+    description: "Let's start with the basics...",
+    param: "gender",
+    stop: true,
+  },
+  {
+    type: "shortText",
+    text: "How old are you?",
+    description: "This helps us help you better. Please provide a real age.",
+    param: "age",
+    validation:"^(1[2-9]|[2-7]\\d|80)$",
+    errorMessage: "May you please provide me with a valid age between 12 and 80?",
+    stop: true,
+  },
+  {
+    type: "choices",
+    choices: [
+      "Greater Cairo ( Cairo - Giza - Qalyubia )",
+      "Alexandria ( Alexandria - Beheira - Matruh )",
+      "Delta Region ( Sharqia - Damietta - Monufia - Gharbia -Kafr el-Sheikh - Dakahlia )",
+      "Suez Canal and Sinai ( Port Said - Ismailia - Suez - North Sinai - South Sinai )",
+      "Northern Upper Egypt ( Minya - Beni Suef - Faiyum )",
+      "Asyut Region ( Asyut - New Valley )",
+      "South Upper Egypt ( Sohag - Qena - Luxor - Aswan - Red Sea )",
+      "Outside of Egypt"
+    ],
+    text: "Where are you located?",
+    description: "This helps us connect you down the road with people near you who might be sharing the same circumstance..",
+    param: "location",
+    stop: true,
+  },
+  {
+    type: "text",
+    text: "Now that we have an idea how to help you down the road, it's time for you to vent out what's on your mind. Please remember: No names, no direct questions, just confessions.",
+  },
+  {
+    type: "choices",
+    text: "Please be aware that your confession will be posted on CC's Facebook Page (Page not group). We can not take down confessions once submitted.",
+    description: "In case you do not want to proceed, just close the window.",
+    choices: ["Continue.."],
+    stop: true,
+  },
+  {
+    type: "shortText",
+    text: "If you'd like to get notified when your confession gets posted and open to receive filtered messages from the community through CC Email only, leave us an email to reach you at.",
+    description: "This doesn't need to be your personal email, you can use a throw-away. Either way, your identity is 100% confidential. You remain anonymous to everyone no matter what.",
+    validate: "",
+    param: "email",
+    stop: true,
+  },
+  {
+    type: "longText",
+    text: "Type in your confession below",
+    description: "We advise you to copy your confession and save it somewhere safe!\nMaximum number of characters is 2500!",
+    param: "confession",
+    validation:"^.{0,2500}$",
+    errorMessage: "I am sorry..you have to make your confession a bit shorter, specifically shorter than 2500 characters..",
+    stop: true,
+  },
+  {
+    type: "choices",
+    choices: [      
+      "Relationship issue (Couples, No Relationship, Can't approach her/him, Break up)",
+      "Loneliness issue (Social, No friends)",
+      "Family issue",
+      "Marriage issue (Engagement/Husband & Wife)",
+      "Homosexuality issue",
+      "Sexuality issue (Habits, unusual sexual issues, taboos)",
+      "Situation_Incident (Narrative: Street incident, Harassment)",
+      "SelfHarm issue",
+      "Drugs issue",
+      "Religious issue",
+      "Society issue",
+      "Academic Advice",
+      "Confusion (Don't know what to do in life for example/feeling lost)",
+      "SelfEsteem issue (Confidence)",
+      "Psychological Issue (Psychological Disorders)",
+      "Inspirational_story (something good that happened and is inspiring)",
+      "COVID19_Vent (Your thoughts, fears, concerns, anything related to that topic that you want to get off your chest)",
+    ],
+    text: "Your confession mainly revolves around a/an ________.",
+    description: "Which of the following categories best describes your confession?",
+    param: "category",
+    stop: true,
+  },
+  {
+    type: "checkbox",
+    choices: [      
+      "Dream",
+      "Pain",
+      "Lie",
+      "Guilt",
+      "Fantasy",
+      "RandomFeeling",
+      "Truth",
+      "WildIncident",
+      "FirstExperience",
+      "Rant",
+      "Opinion"
+    ],
+    text: "Tag your confession (Check all that apply)",
+    description: "The following tags helps the both of us further describe your confession, pick freely!",
+    param: "tags",
+    validation: "^.+$",
+    errorMessage: "You have to select tags",
+    stop: true,
+  },
+  {
+    type: "choices",
+    text: "Do you see this number? <referenceNumber>",
+    choices: ["Yes", "No"],
+    stop: true,
+  },
+  {
+    type: "choices",
+    text: "This is your reference number. Save it. Take a screenshot or put it in a note. It will link you to your confession." ,
+    description: "Keep it a secret, do not share it with anyone nor send it to the page's inbox, just ask for what you want but do not give the reference number away. Okay? Do you understand this point?",
+    choices: [
+      "Okay, I will not show it to anyone and I will not share it with anyone nor send it to the inbox of the page, I will just ask in the inbox what I want but not reveal the number."
+      ],
+    stop: true,
+  },
+    {
+    type: "choices",
+    text: "Okay, would you like to hear my opinion about this confession?",
+    choices: ["Yes sure", "No, not interested"],
+    param: "interestedInAI",
+    path: ["botResponds", "rate"]
+    stop: true,
+  },
+  {
+    key: "botResponds"
+    type: "choices",
+    ai: true,
+    text: "Okay, would you like to hear my opinion about this confession?",
+    choices: ["Yes sure", "No, not interested"],
+    param: "interestedInAI",
+    stop: true,
+  },
+  {
+    key: "rate"
+    type: "choices",
+    text: "Can you rate this experience as in confessing to me in this environment?",
+    choices: ["1", "2","3","4","5"],
+    param: "rating",
+    stop: true,
+  },
+
+]
+
+const chatContainer = document.getElementById('chatContainer');
+const userInput = document.getElementById('userInput');
+const inputContainer = document.getElementById('input-container');
+const paragraphUserInput = document.getElementById('paragraph-userInput');
+const paragraphInputContainer = document.getElementById('paragraph-input-container');
+
+let answers = {};
+
+let currQuestionObj = {}
+
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+async function start(){
+  addReferenceNumber();
+  const { text, description} = WELCOME_SCREEN;
+  // console.log("started")
+    const logoDiv = createLogoDiv();
+    chatContainer.prepend(logoDiv);
+    await sendMessage(text, 'bot');
+    if(description) await sendMessage(description, 'bot');
+    displayChoices(["Okay, I want to confess.."],confess); //ONE PATH FOR NOW
+}
+
+////CONFESSIONS PATH
+
+function addReferenceNumber(){
+  answers.referenceNumber = getReferenceNumber();
+}
+
+async function confess(){
+  const choiceContainer = document.getElementById('choice-container');
+  choiceContainer.remove();
+  const logoContainer = document.getElementById('logo-container');
+  logoContainer.remove()
+  removeLastMessages(2);
+  await processBotScript();
+  submitToBackend();
+}
+
+function submitToBackend(){
+   displayTypingIndicator();
+  google.script.run
+                .withSuccessHandler(
+                  function (success) {
+                    removeTypingIndicator();
+                    if(success) sayThankYou()
+                    else sayOops()
+                })
+                .withFailureHandler(
+                  function (error) {
+                    console.log(error)
+                })
+                .sendToSheets(answers)
+}
+
+async function sayThankYou(){
+  const { text, description} = END_SCREEN;
+  // await sendMessage(text.replace("<SN>",sn), 'bot'); //SN lines since it was canceled 
+  await sendMessage(text, 'bot');
+  if(description) await sendMessage(description, 'bot');
+}
+
+async function sayOops(){
+  await sendMessage("Oops..confession was not posted, refresh please..!", 'bot');
+}
+
+async function processBotScript(){
+  for(questionObj of BOT_SCRIPT_ARRAY){
+    currQuestionObj = {...questionObj}
+    const {type, text, description, stop, param, path, ai} = questionObj;
+    // console.log(param)
+    if(ai) await aiResponds(answers)
+    else{
+      if(text) await sendMessage(text, 'bot');
+      if(description) await sendMessage(description, 'bot');
+    }
+    appendAdditionalMessagesBasedOnQuestion(questionObj);
+    if(stop) await waitForUserInput();
+  }
+}
+
+////////////////////////////// LOGIC
+
+function appendAdditionalMessagesBasedOnQuestion(questionObj){
+  const {type, choices = []} = questionObj
+  if (type === "longText") {
+    displayLongText()
+  } else if(type === "shortText"){
+    displayShortText()
+  }else if(type == "choices" && choices.length > 0){
+    // console.log("choices")
+    displayChoices(choices);
+  }else if(type == "checkbox"){
+    displayCheckboxes(choices, 
+    (selectedChoices) => {
+      // console.log("Selected choices:", selectedChoices);
+      handleCheckboxSelection(selectedChoices)
+      // Continue with the conversation
+    })
+  }
+}
+
+
+async function aiResponds(props){
+  return new Promise(function (resolve, reject) {
+    google.script.run
+            .withSuccessHandler(
+              function (result) {
+                resolve(result)
+
+            })
+            .withFailureHandler(
+              function (error) {
+                reject(error)
+            })
+            .AIResponds(props)
+    })
+}
+
+async function waitForUserInput() {
+  return new Promise((resolve) => {
+    processNextStep = () => {
+      const {type} = currQuestionObj;
+      if(type == "shortText"){
+        userInput.value = '';
+        inputContainer.style.display = "none" //Only display box when we need to input
+      }else if(type == "longText"){
+        paragraphUserInput.value = '';
+        paragraphInputContainer.style.display = "none" //Only display box when we need to input
+      }
+      resolve();
+    };
+  });
+}
+
+
+let lastUserInput;
+let processNextStep;
+
+userInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    handleUserInput()
+  }
+});
+
+
+paragraphUserInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter'&& e.ctrlKey) {
+    e.preventDefault();
+    handleUserInput()
+  }
+});
+
+function handleUserInput(input){
+  lastUserInput = input || userInput.value.trim() || paragraphUserInput.value.trim();
+  // console.log(lastUserInput)
+  const {param, validation, errorMessage} = currQuestionObj
+  const valid = checkValidation(lastUserInput,validation)
+  // console.log(valid)
+  if(!valid){
+    sendMessage(errorMessage, 'bot');
+    userInput.value = ''
+  }else if (lastUserInput !== null || lastUserInput !== undefined) {
+    sendMessage(lastUserInput, 'user');
+    if(param) answers[param] = lastUserInput;
+    // console.log(answers)
+    processNextStep();
+  }
+}
+
+async function sendMessage(message, sender ='user', ms = 1500) {
+  message = message || userInput.value.trim()
+  if (sender === "bot") {
+    // Create and show typing indicator for bot messages only
+    // ms = (message.length/50)*ms
+    await addEmulatedTyping(ms)
+  }
+  createMessageBubble(message, sender);
+  if (sender === "user") userInput.value = "";
+  
+}
+
+
+//////////COMPONENTS CREATION
+
+function createElementFromHTML(htmlString) {
+  const div = document.createElement('div');
+  div.innerHTML = htmlString.trim();
+  return div.firstChild;
+}
+
+
+async function addEmulatedTyping(ms){
+    displayTypingIndicator();
+    await delay(ms)
+    removeTypingIndicator();
+}
+
+function createLogoDiv(){
+  const logoDiv = document.createElement('div');
+  logoDiv.classList.add('logo-container');
+  logoDiv.id = "logo-container";
+  logoDiv.innerHTML = '<img src="<?= HELPERS.getGDriveImgByLink(CCLogo)?>">';
+  return logoDiv
+}
+
+function createMessageBubble(text, sender){
+  const message = document.createElement('div');
+  message.className = `message ${sender}`;
+  text = createTemplateSimple(text, answers)
+  text = addLinks(text)
+  if(sender == "bot") message.innerHTML = '<img src="<?= HELPERS.getGDriveImgByLink(botImage)?>">' + '<div class="message-container">' + text + '</div>';
+  else message.innerHTML = '<div class="message-container">' + text + '</div>' + '<img src="<?= HELPERS.getGDriveImgByLink(userImage) ?>" alt="User">';
+  chatContainer.prepend(message);
+  chatContainer.scrollTop = chatContainer.scrollHeight;
+}
+
+// function createMessageBubble(text, sender){ //ORIGNINAL
+//   const message = document.createElement('div');
+//   message.className = `message ${sender}`;
+//   if(sender == "bot") message.innerHTML = '<img src="<?= HELPERS.getGDriveImgByLink(botImage)?>">' + text;
+//   else message.innerHTML = text + '<img src="<?= HELPERS.getGDriveImgByLink(userImage) ?>" alt="User">';
+//   chatContainer.prepend(message);
+//   chatContainer.scrollTop = chatContainer.scrollHeight;
+// }
+
+
+
+////////////////////////////// TEXTS
+
+  function  displayShortText(){
+    inputContainer.style.display = "flex";
+  }
+
+  function displayLongText(){
+    paragraphInputContainer.style.display = "flex";
+  }
+
+function resizeTextarea(textarea, maxRows) {
+    textarea.style.height = 'auto'; // Reset the height
+    const computedStyles = getComputedStyle(textarea);
+    let lineHeight = computedStyles.lineHeight;
+
+    if (lineHeight === 'normal') {
+        const fontSize = parseFloat(computedStyles.fontSize);
+        lineHeight = fontSize * 1.2; // Assuming a default line-height of 1.2 times the font-size
+    } else {
+        lineHeight = parseFloat(lineHeight);
+    }
+
+    const rows = Math.min(textarea.scrollHeight / lineHeight, maxRows);
+    textarea.style.height = rows * lineHeight + 'px';
+}
+
+////////////////////////////// CHOICES
+
+function displayChoices(choices, callBack) {
+  const choiceContainer = document.createElement('div');
+  choiceContainer.id = 'choice-container';
+  choiceContainer.classList.add('choice-container');
+  choices.forEach((choice) => {
+    const choiceButton = document.createElement('button');
+    choiceButton.textContent = choice;
+    choiceButton.classList.add('choice-button');
+    if(callBack) choiceButton.onclick = callBack;
+    else{
+      choiceButton.onclick = () => {
+        handleChoiceSelection(choice);
+      };
+    }
+    choiceContainer.appendChild(choiceButton);
+  });
+    chatContainer.prepend(choiceContainer);
+    scrollToBottom()
+    scrollToBottom()
+}
+
+function handleChoiceSelection(choice) {
+  // Clear the choice container
+  const choiceContainer = document.getElementById('choice-container');
+  choiceContainer.remove();
+  handleUserInput(choice)
+}
+
+////////////////////////////// CHECKBOXES
+
+function displayCheckboxes(choices, callback) {
+  if (!Array.isArray(choices)) {
+    console.error("The choices parameter must be an array.");
+    return;
+  }
+
+  const checkboxesHTML = choices
+    .map(
+      (choice) => `
+      <label class="checkbox-label">
+        <input type="checkbox" value="${choice}" />
+        <span>${choice}</span>
+      </label>
+    `
+    )
+    .join("");
+
+  const buttonDiv = '<button id="checkbox-submit" class="checkbox-submit">Submit</button>'
+
+  const messageHTML = `
+    <div class="message bot" id="checkbox-container">
+      <div class="message-content">
+        ${checkboxesHTML}
+        ${buttonDiv}
+      </div>
+    </div>
+  `;
+
+  chatContainer.prepend(createElementFromHTML(messageHTML));
+
+  const submitButton = document.getElementById("checkbox-submit");
+  submitButton.addEventListener("click", () => {
+    const selectedChoices = Array.from(
+      document.querySelectorAll('input[type="checkbox"]:checked')
+    ).map((checkbox) => checkbox.value);
+    callback(selectedChoices);
+  });
+  scrollToBottom() 
+}
+
+function handleCheckboxSelection(selectedChoices) {
+  // Clear the choice container
+
+  let checkboxesString 
+  if(selectedChoices.length == 0) checkboxesString = ""
+  else {
+    //Only proceed if the checkboxes are not empty
+    checkboxesString = selectedChoices.join(", ")
+    const choiceContainer = document.getElementById('checkbox-container');
+    choiceContainer.remove();
+    handleUserInput(checkboxesString)
+  }
+
+}
+
+////////////////////////////// SKIP BUTTON (NOT USED YET)
+
+function displaySkipButton() {
+  const skipButton = document.createElement('button');
+  skipButton.id = 'skip-button';
+  skipButton.textContent = 'Skip';
+  skipButton.classList.add('skip-button');
+  skipButton.onclick = () => {
+    handleSkip();
+  };
+  chatContainer.prepend(skipButton);
+}
+
+function handleSkip() {
+  const skipButton = document.getElementById('skip-button');
+  if (skipButton) {
+    skipButton.remove();
+  }
+  if (inputContainer.style.display === "flex") {
+    userInput.value = '';
+  }
+  processNextStep();
+}
+
+////////////////////////////// TYPING INDICATOR
+
+function displayTypingIndicator() {
+  const typingIndicator = document.createElement('div');
+  typingIndicator.className = 'message bot';
+  typingIndicator.innerHTML = '<img src="<?= HELPERS.getGDriveImgByLink(botImage)?>" alt="Bot"><div class="typing-indicator"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>';
+  typingIndicator.id = 'typingIndicator';
+  chatContainer.prepend(typingIndicator);
+}
+
+function removeTypingIndicator() {
+  const typingIndicator = document.getElementById('typingIndicator');
+  if (typingIndicator) {
+    typingIndicator.remove();
+  }
+}
+
+function removeLastMessages(n) {
+  for (let i = 0; i < n; i++) {
+    if (chatContainer.lastElementChild) {
+      chatContainer.removeChild(chatContainer.lastElementChild);
+    }
+  }
+}
+
+////////////////////VALIDATION
+
+function checkValidation(input, validation){
+  // console.log(input)
+  // console.log(validation)
+  if(!validation) return true
+  const validationPattern = new RegExp(validation,"s");
+  const valid = validationPattern.test(input);
+  // console.log(valid)
+  return valid;
+}
+
+
+////////////////////UTILITY
+
+function scrollToBottom() {
+  chatContainer.scrollTop = chatContainer.scrollHeight;
+}
+
+function createTemplateSimple(text, variables) {
+  var variablesKeys = Object.keys(variables);
+  variablesKeys.forEach(function (variable) {
+    var replacement = variables[variable];
+    var regex = new RegExp("<" + variable + ">", "g");
+    text = text.replace(regex, replacement)
+  })
+  return text;
+}
+
+function addLinks(message){
+  const linkRegex = /(https?:\/\/[^\s]+)/g;
+  const clickableMessage = message.replace(linkRegex, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
+  return clickableMessage
+}
+
+///////////////////////////////////
+start()
+
+</script>

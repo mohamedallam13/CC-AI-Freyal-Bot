@@ -1,0 +1,279 @@
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #222;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+
+  }
+
+  .send-button {
+    padding: 5px 10px;
+    font-size: 1em;
+    background-color: #3f51b5;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 8px;
+  }
+
+  .logo-container img {
+    height: 250px;
+    width: 250px;
+  }
+
+  .send-button i {
+    font-size: 1.2em;
+  }
+
+  .chat-container {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column-reverse;
+  }
+
+  .message {
+    max-width: 80%;
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+    border-radius: 1rem;
+    display: flex;
+    animation: fadeInUp 0.5s ease-out forwards;
+  }
+
+  .message-container{
+    white-space: pre-wrap; /* Ensures that the text wraps within the container */
+    word-wrap: break-word; /* Breaks long words if they exceed the container's width */
+    overflow-wrap: break-word; /* Alternative for 'word-wrap' */
+    max-width: 100%; /* Ensures that the container doesn't exceed its parent's width */
+    overflow: hidden; /* Hides any overflow that still occurs */
+  }
+
+  .message.user {
+    display: flex;
+    align-self: flex-end;
+    align-items: center;
+    width: fit-content;
+    background-color: #0c84ff;
+    color: #fff;
+  }
+
+  .message.bot {
+    display: flex;
+    align-items: center;
+    align-self: flex-start;
+    width: fit-content;
+    background-color: #444;
+    color: #ddd;
+  }
+
+  .message.bot img {
+    height: 32px;
+    width: 32px;
+    margin-right: 0.5rem;
+    border-radius: 50%;
+  }
+
+  .message.user img {
+    height: 32px;
+    width: 32px;
+    margin-left: 0.5rem;
+    border-radius: 50%;
+  }
+
+  .input-container {
+    display: none;
+    /* display: flex; */
+    padding: 1rem;
+    background-color: #333;
+  }
+
+  .input-container input {
+    height: 25px;
+    font-size: 15px;
+    flex-grow: 1;
+    padding: 0.5rem;
+    border: none;
+    border-radius: 1rem;
+    outline: none;
+  }
+
+  .paragraph-input-container {
+    display: none;
+    /* display: flex; */
+    padding: 1rem;
+    background-color: #333;
+  }
+
+  .paragraph-input-container textarea {
+    font-family: Arial, sans-serif;
+    font-size: 15px;
+    resize: none;
+    flex-grow: 1;
+    padding: 0.5rem;
+    border: none;
+    border-radius: 1rem;
+    outline: none;
+  }
+
+  .typing-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 15px;
+    margin-left: 12px;
+    overflow: hidden;
+    position: relative;
+    /* Add this line */
+
+  }
+
+.dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #aaa; /* Change this line */
+  margin-right: 3px;
+  opacity: 0;
+  animation: fadeInOut 1.2s infinite;
+}
+
+  .dot:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+
+  .dot:nth-child(3) {
+    animation-delay: 0.4s;
+  }
+
+  .choice-container{
+    display: flex;
+    flex-direction: column;
+    animation: fadeInUp 0.5s ease-out forwards;
+  }
+
+  .choice-button {
+    background-color: #2980b9;
+    max-width: fit-content;
+    border: none;
+    color: white;
+    text-align: center;
+    display: inline-block;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 10px 20px;
+    margin: 5px 2px;
+    cursor: pointer;
+    border-radius: 25px;
+    text-decoration: none;
+    transition: 0.3s;
+  }
+
+  .choice-button:hover {
+    background-color: #3498db;
+  }
+
+  .large-input {
+    height: 100px;
+    vertical-align: top;
+    resize: both;
+     white-space: pre-wrap;
+  }
+
+  .checkbox-label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  .checkbox-label input[type="checkbox"] {
+    margin-right: 8px;
+  }
+
+  .checkbox-submit {
+    background-color: #f1c40f;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    padding: 5px 10px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  @keyframes fadeInUp {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeInOut {
+
+    0%,
+    100% {
+      opacity: 0;
+    }
+
+    50% {
+      opacity: 1;
+    }
+  }
+
+
+
+/* Responsive styles */
+/* @media screen and (max-width: 768px) {
+  .message {
+    font-size: 14px;
+    max-width: 300px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .message {
+    font-size: 12px;
+    max-width: 250px;
+  }
+
+  .message.user {
+    margin-left: calc(100% - 250px);
+  }
+} */
+
+  /* @media (max-width: 767px) {
+    .message {
+      max-width: 80%;
+      margin-bottom: 0.5rem;
+      padding: 0.75rem;
+      font-size: 1.5rem;
+    }
+
+    .message.bot img,
+    .message.user img {
+      height: 48px;
+      width: 48px;
+    }
+
+    .input-container input {
+      font-size: 1.5rem;
+      padding: 0.75rem;
+    }
+  } */
+</style>

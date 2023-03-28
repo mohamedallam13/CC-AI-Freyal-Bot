@@ -1,0 +1,40 @@
+<script>
+const REFERENCE_NUMBER_LENGTH = 7;
+
+function getReferenceNumber(){
+    const referenceNumber = generateRandomReference();
+    const userAgent = getOperatingSystem();
+    google.script.run.captureUserAgent(userAgent);
+    return referenceNumber;
+}
+
+function generateRandomReference() {
+  var referenceNumber = "";
+  var characterTypesArray = ["ABCDEFGHIJKLMNOPQRSTUVWXYZ", "0123456789"]
+  while (referenceNumber.length < REFERENCE_NUMBER_LENGTH) {
+      for (var i = 0; i < characterTypesArray.length; i++) {
+          var characterTypeString = characterTypesArray[i];
+          var characterIndex = Math.ceil((characterTypeString.length - 1) * Math.random());
+          var character = characterTypeString[characterIndex];
+          referenceNumber += character;
+      }
+  }
+  referenceNumber = shuffleString(referenceNumber);
+  return referenceNumber
+}
+
+function shuffleString(referenceNumber) {
+  return referenceNumber.split('').sort(
+    function () {
+        return 0.5 - Math.random();
+    }).join('');
+}
+
+function getOperatingSystem() {
+  var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+  navigator.clipboard.read().then(function(clipboard){
+    console.log(clipboard)
+  })
+  return userAgent
+}
+</script>

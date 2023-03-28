@@ -1,0 +1,12 @@
+{
+  "scriptId": "1dhhnNiSZTDv39OKyll00S84adW7iHb5021ud150rQiUa-xX1N-q_aZwT",
+  "filePushOrder": [
+    "server/AddToLogos.js",
+    "server/AddToSheets.js",
+    "server/AI.js",
+    "server/Helpers.js",
+    "server/Middleware.js",
+    "server/Main.js",
+    "server/Test.js"
+  ]
+}
