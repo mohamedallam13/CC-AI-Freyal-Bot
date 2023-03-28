@@ -153,22 +153,22 @@
     {
     type: "choices",
     text: "Okay, would you like to hear my opinion about this confession?",
-    choices: ["Yes sure", "No, not interested"],
+    choices: ["Yes sure"],
     param: "interestedInAI",
-    path: ["botResponds", "rate"]
+    path: ["botResponds", "rate"], //Will not be used now, will be used later in a different logic map based architecture
     stop: true,
   },
   {
-    key: "botResponds"
+    key: "botResponds",
     type: "choices",
     ai: true,
     text: "Okay, would you like to hear my opinion about this confession?",
-    choices: ["Yes sure", "No, not interested"],
+    choices: ["Alright.."],
     param: "interestedInAI",
     stop: true,
   },
   {
-    key: "rate"
+    key: "rate",
     type: "choices",
     text: "Can you rate this experience as in confessing to me in this environment?",
     choices: ["1", "2","3","4","5"],
@@ -249,7 +249,14 @@ async function processBotScript(){
     currQuestionObj = {...questionObj}
     const {type, text, description, stop, param, path, ai} = questionObj;
     // console.log(param)
-    if(ai) await aiResponds(answers)
+      if(ai) {
+        const aiText = await aiResponds(answers);
+        const aiTextArr = aiText.split('\n')
+        for(aiTextEl of aiTextArr){
+          if(aiTextEl == '' || aiTextEl == ' ' || aiTextEl == '\n' ) continue
+          await sendMessage(aiTextEl, 'bot');
+        }
+      }
     else{
       if(text) await sendMessage(text, 'bot');
       if(description) await sendMessage(description, 'bot');
@@ -282,10 +289,13 @@ function appendAdditionalMessagesBasedOnQuestion(questionObj){
 
 
 async function aiResponds(props){
+    displayTypingIndicator();
   return new Promise(function (resolve, reject) {
     google.script.run
             .withSuccessHandler(
               function (result) {
+                removeTypingIndicator();
+                answers.aiResponse = result;
                 resolve(result)
 
             })
@@ -373,8 +383,10 @@ function createElementFromHTML(htmlString) {
 
 async function addEmulatedTyping(ms){
     displayTypingIndicator();
+    scrollToBottom()
     await delay(ms)
     removeTypingIndicator();
+    scrollToBottom()
 }
 
 function createLogoDiv(){
