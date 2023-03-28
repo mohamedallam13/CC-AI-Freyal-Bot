@@ -262,7 +262,6 @@ async function processBotScript(){
       if(description) await sendMessage(description, 'bot');
     }
     appendAdditionalMessagesBasedOnQuestion(questionObj);
-    flashText() // To stop it from jumping up, could work who knows
     if(stop) await waitForUserInput();
   }
 }
@@ -278,6 +277,7 @@ function appendAdditionalMessagesBasedOnQuestion(questionObj){
   }else if(type == "choices" && choices.length > 0){
     // console.log("choices")
     displayChoices(choices);
+    flashText() // To stop it from jumping up, could work who knows
   }else if(type == "checkbox"){
     displayCheckboxes(choices, 
     (selectedChoices) => {
@@ -285,6 +285,7 @@ function appendAdditionalMessagesBasedOnQuestion(questionObj){
       handleCheckboxSelection(selectedChoices)
       // Continue with the conversation
     })
+    flashText() // To stop it from jumping up, could work who knows
   }
 }
 
