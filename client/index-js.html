@@ -262,6 +262,7 @@ async function processBotScript(){
       if(description) await sendMessage(description, 'bot');
     }
     appendAdditionalMessagesBasedOnQuestion(questionObj);
+    flashText() // To stop it from jumping up, could work who knows
     if(stop) await waitForUserInput();
   }
 }
@@ -423,6 +424,11 @@ function createMessageBubble(text, sender){
 
   function  displayShortText(){
     inputContainer.style.display = "flex";
+  }
+
+  function flashText(){
+    inputContainer.style.display = "flex";
+    inputContainer.style.display = "none";
   }
 
   function displayLongText(){
